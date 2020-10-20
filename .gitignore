@@ -1,3 +1,6 @@
+# API secret keys go here...
+auth.py   
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
