@@ -32,6 +32,32 @@ class TestMentions(unittest.TestCase):
 
         self.assertEquals(actual, message)
 
+    def test_can_send_dm(self):
+
+        api = authenticate()
+        my_name = api.me().screen_name
+        my_id = api.me().id
+
+        api.send_direct_message(my_id, f"Hello {my_name}, How are you today")
+
+
+        #reply_options = [
+        #    {
+        #      "label": "Red",
+        #      "description": "Color of heightened emotion, strength, and power.",
+        #      "metadata": "external_id_1"
+        #    },
+        #    {
+        #      "label": "Blue",
+        #      "description": "Convey a sense of trust, loyalty, cleanliness, and understanding.",
+        #      "metadata": "external_id_2"
+        #    }
+        #]
+        # Note that there is a bug in tweepy Api fixed in https://github.com/tweepy/tweepy/pull/1364
+        # Quick_reply_type is currently broken.
+        # api.send_direct_message(my_id, "text", quick_reply_type=reply_options)
+
+        self.assertTrue(True)
 
 if __name__ == '__main__':
     unittest.main()
