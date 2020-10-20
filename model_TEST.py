@@ -9,7 +9,7 @@ from model import authenticate
 def generate_random_string(length:int) -> str:
     return "".join(random.choice(ascii_lowercase) for _ in range(length))
 
-class TestMentions(unittest.TestCase):
+class TestTwitterBot(unittest.TestCase):
 
     def test_can_see_mentions(self):
         """
