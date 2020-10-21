@@ -113,8 +113,8 @@ class TestTwitterBot(unittest.TestCase):
             explanatory_text = tweet.text
 
             quoted_message_id = tweet.quoted_status_id
-            tweet = api.get_status(quoted_message_id)
-            json_string = json.dumps(tweet._json)
+            target_tweet = api.get_status(quoted_message_id)
+            json_string = json.dumps(target_tweet._json)
             filtered_data = parse_tweet_data(json_string)
 
             filtered_data.update({"explanation_text": explanatory_text})
@@ -138,14 +138,15 @@ class TestTwitterBot(unittest.TestCase):
         reply_id = tweet.in_reply_to_status_id 
         if isinstance(reply_id, int):
             explanatory_text = tweet.text
-            tweet = api.get_status(reply_id)
-            json_string = json.dumps(tweet._json)
+            target_tweet = api.get_status(reply_id)
+            json_string = json.dumps(target_tweet._json)
             filtered_data = parse_tweet_data(json_string)
 
             filtered_data.update({"explanation_text": explanatory_text})
 
         else:
             self.fail("Tweet was not a quote tweet")
+
 
 if __name__ == '__main__':
     unittest.main()
