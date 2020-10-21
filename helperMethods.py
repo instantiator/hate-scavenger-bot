@@ -30,8 +30,11 @@ def parse_tweet_data(json_string: str, fields=TWEET_FIELDS) -> Dict[str, Any]:
             key = f[-1]
             filtered_data[key] = tmp
 
-    # Delete "full_text" field, move data (if it exists) into the "text" key.
-    filtered_data.setdefault("text", filtered_data.get("full_text"))
-    filtered_data.pop("full_text") 
+    # Merge "full_text' and 'text' into a single key.
+    # Todo move this outside function.
+    if filtered_data["full_text"] is not None:
+        filtered_data["text"] = filtered_data["full_text"]
+    filtered_data.pop("full_text")
+
 
     return filtered_data
