@@ -1,4 +1,3 @@
-from helperMethods import parse_tweet_data
 import random
 from string import ascii_lowercase
 import unittest
@@ -35,6 +34,10 @@ class TestTwitterBot(unittest.TestCase):
         self.assertEquals(actual, message)
 
     def test_can_send_dm(self):
+        """
+        End to End Test: 
+            Logs in, and then sends a direct message to ourselves
+        """
 
         api = authenticate()
         my_name = api.me().screen_name
@@ -62,6 +65,10 @@ class TestTwitterBot(unittest.TestCase):
         self.assertTrue(True)
 
     def test_get_tweet_data(self):
+        """
+        End to End Test: 
+            Logs in, and then attempts to extract relevant info from a tweet.
+        """
 
         api = authenticate()
         my_name = api.me().screen_name
@@ -88,30 +95,57 @@ class TestTwitterBot(unittest.TestCase):
         self.assertEqual(filtered_data["full_text"], msg)
         self.assertEqual(filtered_data["id"], tweet.id)
 
-    def test_can_get_tweets_quoted_message(self):
+    def test_can_get_tweet_quoted_message(self):
         """
         End to End Test: 
-            Logs in, and then sends a random tweet (using our name as the @mention)
-            We then request the mentions timeline and check if 
-            the most recent mention is the message we have just sent.
+            Logs in, and then attempts to extract relevant info from a QUOTED tweet.
         """
         api = authenticate()
-        my_name = api.me().screen_name
 
+        most_recent_mentions = api.mentions_timeline()
+        tweet = most_recent_mentions[3]
 
-        most_recent_mention = api.mentions_timeline()
-        lewis_tweet = most_recent_mention[3]
+        ## Todo, send a tweet, quote it, then make this a proper test
 
-        print("dave")
+        # How to handle quoted text.
+        if tweet.is_quote_status:
 
-        if lewis_tweet.is_quote_status:
-            explanatory_text = lewis_tweet.text # Todo, remove @mention and urls.
+            explanatory_text = tweet.text
 
-            offending_message_id = lewis_tweet.quoted_status_id
-            tweet = api.get_status(offending_message_id)
+            quoted_message_id = tweet.quoted_status_id
+            tweet = api.get_status(quoted_message_id)
+            json_string = json.dumps(tweet._json)
+            filtered_data = parse_tweet_data(json_string)
 
+            filtered_data.update({"explanation_text": explanatory_text})
 
-        self.assertEquals("x", "message")
+        else:
+            self.fail("Tweet was not a quote tweet")
+
+    def test_can_get_tweet_reply_message(self):
+        """
+        End to End Test: 
+            Logs in, and then attempts to extract relevant info from a Reply tweet.
+        """
+        api = authenticate()
+
+        most_recent_mentions = api.mentions_timeline()
+        tweet = most_recent_mentions[4]
+
+        ## Todo, send a tweet, reply to it, then make this a proper test
+
+        # How to handle reply text.
+        reply_id = tweet.in_reply_to_status_id 
+        if isinstance(reply_id, int):
+            explanatory_text = tweet.text
+            tweet = api.get_status(reply_id)
+            json_string = json.dumps(tweet._json)
+            filtered_data = parse_tweet_data(json_string)
+
+            filtered_data.update({"explanation_text": explanatory_text})
+
+        else:
+            self.fail("Tweet was not a quote tweet")
 
 if __name__ == '__main__':
     unittest.main()
