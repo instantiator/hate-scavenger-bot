@@ -2,6 +2,7 @@ import random
 from string import ascii_lowercase
 import unittest
 import json
+import time
 
 from model import authenticate
 from helperMethods import parse_tweet_data
@@ -92,7 +93,7 @@ class TestTwitterBot(unittest.TestCase):
         json_string = json.dumps(tweet._json)
         filtered_data = parse_tweet_data(json_string)
 
-        self.assertEqual(filtered_data["full_text"], msg)
+        self.assertEqual(filtered_data["text"], msg)
         self.assertEqual(filtered_data["id"], tweet.id)
 
     def test_can_get_tweet_quoted_message(self):
@@ -101,9 +102,12 @@ class TestTwitterBot(unittest.TestCase):
             Logs in, and then attempts to extract relevant info from a QUOTED tweet.
         """
         api = authenticate()
+        my_name = api.me().screen_name
 
         most_recent_mentions = api.mentions_timeline()
         tweet = most_recent_mentions[3]
+
+        api.update_status(f"@{my_name} (reply) {generate_random_string(20)}", in_reply_to_status_id = "")
 
         ## Todo, send a tweet, quote it, then make this a proper test
 
@@ -122,17 +126,35 @@ class TestTwitterBot(unittest.TestCase):
         else:
             self.fail("Tweet was not a quote tweet")
 
+
     def test_can_get_tweet_reply_message(self):
         """
         End to End Test: 
             Logs in, and then attempts to extract relevant info from a Reply tweet.
         """
+
         api = authenticate()
+        my_name = api.me().screen_name
+        my_id = api.me().id
+
+        # send message
+        initial_message = generate_random_string(25)
+        api.update_status(initial_message)
+
+        time.sleep(1)
+
+        timeline = api.user_timeline(my_id)
+        initial_tweet = timeline[0]
+
+        self.assertEquals(initial_tweet.text, initial_message)
+
+        reply_msg = f"@{my_name} (reply) {generate_random_string(20)}"
+        api.update_status(reply_msg, in_reply_to_status_id = initial_tweet.id)
+
+        time.sleep(1)
 
         most_recent_mentions = api.mentions_timeline()
-        tweet = most_recent_mentions[4]
-
-        ## Todo, send a tweet, reply to it, then make this a proper test
+        tweet = most_recent_mentions[0]
 
         # How to handle reply text.
         reply_id = tweet.in_reply_to_status_id 
@@ -141,11 +163,14 @@ class TestTwitterBot(unittest.TestCase):
             target_tweet = api.get_status(reply_id)
             json_string = json.dumps(target_tweet._json)
             filtered_data = parse_tweet_data(json_string)
-
             filtered_data.update({"explanation_text": explanatory_text})
 
+            self.assertEquals(filtered_data["explanation_text"], reply_msg)
+            self.assertEquals(filtered_data["text"], initial_tweet.text)
+            self.assertEquals(filtered_data["id"], initial_tweet.id)
+
         else:
-            self.fail("Tweet was not a quote tweet")
+            self.fail("Tweet was not a reply tweet")
 
 
 if __name__ == '__main__':
