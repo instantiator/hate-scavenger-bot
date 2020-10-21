@@ -21,3 +21,6 @@ class TestFilterData(unittest.TestCase):
         actual = parse_tweet_data(example_json_string, fields=keys)
 
         self.assertEqual(actual, expected)
+
+if __name__ == '__main__':
+    unittest.main()
