@@ -88,5 +88,30 @@ class TestTwitterBot(unittest.TestCase):
         self.assertEqual(filtered_data["full_text"], msg)
         self.assertEqual(filtered_data["id"], tweet.id)
 
+    def test_can_get_tweets_quoted_message(self):
+        """
+        End to End Test: 
+            Logs in, and then sends a random tweet (using our name as the @mention)
+            We then request the mentions timeline and check if 
+            the most recent mention is the message we have just sent.
+        """
+        api = authenticate()
+        my_name = api.me().screen_name
+
+
+        most_recent_mention = api.mentions_timeline()
+        lewis_tweet = most_recent_mention[3]
+
+        print("dave")
+
+        if lewis_tweet.is_quote_status:
+            explanatory_text = lewis_tweet.text # Todo, remove @mention and urls.
+
+            offending_message_id = lewis_tweet.quoted_status_id
+            tweet = api.get_status(offending_message_id)
+
+
+        self.assertEquals("x", "message")
+
 if __name__ == '__main__':
     unittest.main()
