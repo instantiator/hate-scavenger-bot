@@ -1,13 +1,14 @@
 import random
 from string import ascii_lowercase
 import unittest
-
+import json
 
 from model import authenticate
 
 
 def generate_random_string(length:int) -> str:
     return "".join(random.choice(ascii_lowercase) for _ in range(length))
+
 
 class TestTwitterBot(unittest.TestCase):
 
@@ -58,6 +59,23 @@ class TestTwitterBot(unittest.TestCase):
         # api.send_direct_message(my_id, "text", quick_reply_type=reply_options)
 
         self.assertTrue(True)
+
+    def test_get_tweet_data(self):
+
+        api = authenticate()
+        my_name = api.me().screen_name
+
+        msg = generate_random_string(30)
+
+        # Create a tweet
+        api.update_status(msg)
+        
+        # Get Tweet (via user timeline)
+        tweets = api.user_timeline(screen_name=my_name, count=1, include_rts = False, tweet_mode = 'extended')
+
+        tweet = tweets[0]
+        self.assertEqual(tweet.full_text, msg)
+
 
 if __name__ == '__main__':
     unittest.main()
