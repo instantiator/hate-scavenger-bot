@@ -1,6 +1,6 @@
 import unittest
 
-from helperMethods import parse_tweet_data
+from helperMethods import parse_tweet_data, remove_user_info_from_tweet
 
 class TestFilterData(unittest.TestCase):
 
@@ -21,6 +21,30 @@ class TestFilterData(unittest.TestCase):
         actual = parse_tweet_data(example_json_string, fields=keys)
 
         self.assertEqual(actual, expected)
+
+class Regex(unittest.TestCase):
+
+    def test_remove_user_info_with_one_user(self):
+        tweet = "@Bot Hello World!"
+        expected = "@_ Hello World!"
+
+        actual = remove_user_info_from_tweet(tweet)
+        self.assertEquals(actual, expected)
+
+    def test_remove_user_info_with_two_users(self):
+        tweet =  "@Bot I don't like @Bot2, he is mean"
+        expected =  "@_ I don't like @_, he is mean"
+
+        actual = remove_user_info_from_tweet(tweet)
+        self.assertEquals(actual, expected)
+
+    def test_remove_user_info_returns_original_when_no_users(self):
+        tweet =  "Ham and pineapple make for a great pizza"
+        expected =  "Ham and pineapple make for a great pizza"
+
+        actual = remove_user_info_from_tweet(tweet)
+        self.assertEquals(actual, expected)
+
 
 if __name__ == '__main__':
     unittest.main()

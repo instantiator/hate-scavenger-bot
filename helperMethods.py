@@ -1,5 +1,6 @@
 from typing import Dict, Any
 import json
+import re
 
 TWEET_FIELDS = ["id", "created_at", "full_text", "lang", "retweet_count", "favorite_count", "geo", "place", ("entities", "hashtags")]
 
@@ -29,3 +30,11 @@ def parse_tweet_data(json_string: str, fields=TWEET_FIELDS) -> Dict[str, Any]:
             filtered_data[key] = tmp
 
     return filtered_data
+
+def remove_user_info_from_tweet(tweet:str) -> str:
+    """
+        "@Bot Hello World!"  => "@_ Hello World!"
+        "@Bot I don't like @Bot2, he is mean" => "@_ I don't like @_, he is mean"
+    """
+    return re.sub(r"@[\w_]+", "@_", tweet)
+    
