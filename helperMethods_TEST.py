@@ -1,6 +1,6 @@
 import unittest
 
-from helperMethods import parse_tweet_data, remove_user_info_from_tweet
+from helperMethods import parse_tweet_data, remove_user_info_from_tweet, remove_url_from_tweet
 
 class TestFilterData(unittest.TestCase):
 
@@ -45,6 +45,27 @@ class Regex(unittest.TestCase):
         actual = remove_user_info_from_tweet(tweet)
         self.assertEquals(actual, expected)
 
+    
+    def test_remove_url(self):
+        tweet = 'here is a url https://t.co/MTKGymzfmf' 
+        expected = 'here is a url <url>'
+
+        actual = remove_url_from_tweet(tweet)
+        self.assertEquals(actual, expected)
+
+    def test_remove_url_when_several_urls_exist(self):
+        tweet = 'A https://t.co/MTKGymzfmf B https://www.bbc.co.uk/news C https://docs.python.org/3.8/howto/logging.html' 
+        expected = 'A <url> B <url> C <url>'
+
+        actual = remove_url_from_tweet(tweet)
+        self.assertEquals(actual, expected)
+
+    def test_remove_url_returns_string_when_no_urls(self):
+        tweet =  "Ham and pineapple make for a great pizza"
+        expected =  "Ham and pineapple make for a great pizza"
+
+        actual = remove_url_from_tweet(tweet)
+        self.assertEquals(actual, expected)
 
 if __name__ == '__main__':
     unittest.main()
