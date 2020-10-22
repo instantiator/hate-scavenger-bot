@@ -52,6 +52,7 @@ def process_mention(tweet) -> str:
 def add_to_database(tweet, filepath):
     with open(filepath,"a") as f:
         f.write(json.dumps(tweet))
+        f.write("\n")
 
 
 if __name__ == '__main__':
@@ -98,3 +99,4 @@ if __name__ == '__main__':
 
 
     logging.info("======================================\n")
+    exit(0)
