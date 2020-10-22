@@ -1,13 +1,15 @@
+from helperMethods import parse_tweet_data
 import random
 from string import ascii_lowercase
 import unittest
-
+import json
 
 from model import authenticate
-
+from helperMethods import parse_tweet_data
 
 def generate_random_string(length:int) -> str:
     return "".join(random.choice(ascii_lowercase) for _ in range(length))
+
 
 class TestTwitterBot(unittest.TestCase):
 
@@ -58,6 +60,33 @@ class TestTwitterBot(unittest.TestCase):
         # api.send_direct_message(my_id, "text", quick_reply_type=reply_options)
 
         self.assertTrue(True)
+
+    def test_get_tweet_data(self):
+
+        api = authenticate()
+        my_name = api.me().screen_name
+
+        msg = generate_random_string(30)
+
+        # Create a tweet
+        api.update_status(msg)
+        
+        # Get Tweet (via user timeline)
+        tweets = api.user_timeline(screen_name=my_name, count=1, include_rts = False, tweet_mode = 'extended')
+
+        tweet = tweets[0]
+        self.assertEqual(tweet.full_text, msg)
+
+        # Note that this step is not entirely necessary, we could create our database by calling the tweepy methods directly 
+        # (e.g. [tweepy object].text) as opposed to using the following convoluted process of [tweepy object] -> json_string -> python dict -> dict["text"]))
+        # However the advantage of converting to Json and then extracting from Json is that we 'decouple' functionality. 
+        # For instance, we could replace 'tweepy' with some other library that can export tweets in Json format and the "parse_tweet_data" function
+        # should work more or less the same.  
+        json_string = json.dumps(tweet._json)
+        filtered_data = parse_tweet_data(json_string)
+
+        self.assertEqual(filtered_data["full_text"], msg)
+        self.assertEqual(filtered_data["id"], tweet.id)
 
 if __name__ == '__main__':
     unittest.main()
