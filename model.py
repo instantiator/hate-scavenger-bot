@@ -25,22 +25,36 @@ def get_mentions(api) -> List:
 
 
 def process_quote(api, tweet) -> str:
-    explanatory_text = tweet.text
+    notify_text = tweet.text
     quoted_message_id = tweet.quoted_status_id
     target_tweet = api.get_status(quoted_message_id)
+
+    notify = {"notify_text": notify_text, 
+              "notify_tweet_id": tweet.id,
+              "notify_is_reply": False,
+              "notify_is_retweet": tweet.is_quote_status, 
+              "notify_screen_name": tweet.user.screen_name }
     
     json_tweet = target_tweet._json
-    json_tweet.update({"explanatory_text": explanatory_text})
+    json_tweet.update(notify)
     return json.dumps(json_tweet)
 
 
 def process_reply(api, tweet) -> str:
-    explanatory_text = tweet.text
+    notify_text = tweet.text
     reply_id: int = tweet.in_reply_to_status_id
     target_tweet = api.get_status(reply_id)
 
+    notify = {"notify_text": notify_text, 
+              "notify_tweet_id": tweet.id,
+              "notify_is_reply": reply_id,
+              "notify_is_retweet": tweet.is_quote_status, 
+              "notify_screen_name": tweet.user.screen_name }
+
+
+
     json_tweet = target_tweet._json
-    json_tweet.update({"explanatory_text": explanatory_text})
+    json_tweet.update(notify)
     return json.dumps(json_tweet)
 
 
