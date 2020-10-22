@@ -58,3 +58,16 @@ def remove_user_info_from_tweet(tweet:Optional[str]) -> str:
         return ''
 
     return re.sub(r'@[\w_]+', '@_', tweet)
+
+def remove_url_from_tweet(tweet: Optional[str]) -> str:
+    '''
+        'here is a url https://t.co/MTKGymzfmf' => 'here is a url <url>'
+    '''
+
+    ## https://stackoverflow.com/questions/6038061/regular-expression-to-find-urls-within-a-string
+    pattern = r'(http|ftp|https)://([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?'
+
+    if tweet is None:
+        return ''
+
+    return re.sub(pattern, '<url>', tweet)
