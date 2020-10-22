@@ -3,7 +3,9 @@ import json
 import re
 
 TWEET_FIELDS = ['id', 'created_at', 'full_text', 'text', ('user', 'screen_name'), 'lang', 'retweet_count', 'favorite_count', 'geo', ('entities', 'hashtags'),
-                'notify_text', 'notify_id', 'notify_is_reply', 'notify_is_retweet', 'notify_screen_name']
+                "was_reply_to_id", "was_reply_to_text", "was_retweet_of_id", "was_retweet_of_text",
+                'notify_text', 'notify_id', 'notify_is_reply', 'notify_is_retweet', 'notify_screen_name',
+                ]
 
 def parse_tweet_data(json_string: str, fields=TWEET_FIELDS) -> Dict[str, Any]:
     '''
