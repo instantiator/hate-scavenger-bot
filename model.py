@@ -104,7 +104,6 @@ if __name__ == '__main__':
 
         logging.info(f"Extracting data from tweet: {mention.id} ...")
         filtered_data = parse_tweet_data(json_tweet)
-        logging.info(f"Cleaning and anonymizing extracted data from tweet: {mention.id}")
         cleaned_data = cleanup_data(filtered_data)
 
         logging.info(f"Adding tweet: {mention.id} to the database ...")
