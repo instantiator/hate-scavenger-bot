@@ -21,7 +21,7 @@ def authenticate():
     return api
 
 def get_mentions(api) -> List:
-    return api.mentions_timeline()
+    return api.mentions_timeline(count=100)
 
 
 def process_quote(api, tweet) -> str:
@@ -74,7 +74,7 @@ if __name__ == '__main__':
     logging.info(f"Getting Mentions: {len(recent_mentions)} found")
 
     for mention in recent_mentions:
-        logging.info(f"Processing Tweet: {mention.id} sent from user: {mention.user} ...")
+        logging.info(f"Processing Tweet: {mention.id} sent from user: {mention.user.screen_name} ...")
 
         if mention.is_quote_status:
             logging.info(f"Tweet {mention.id} is being processed as type 'quote'.")
@@ -93,7 +93,7 @@ if __name__ == '__main__':
         logging.info(f"Cleaning and anonymizing extracted data from tweet: {mention.id}")
         cleaned_data = cleanup_data(filtered_data)
 
-        logging.info("Adding tweet: {mention.id} to the database ...")
+        logging.info(f"Adding tweet: {mention.id} to the database ...")
         database_filename = os.path.join(OUTPUT_DIR, "database.txt")
         add_to_database(cleaned_data, database_filename)
 
