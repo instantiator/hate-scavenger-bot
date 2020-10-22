@@ -9,7 +9,7 @@ class TestFilterData(unittest.TestCase):
 
         expected = {'id': 1318898605122617345,
                     'created_at': 'Wed Oct 21 12:55:06 +0000 2020',
-                    'full_text': 'bujdqcdkwaimymtffiozftobxtwdxr',
+                    'text': 'bujdqcdkwaimymtffiozftobxtwdxr',
                     'lang': 'et',
                     'retweet_count': 0,
                     'favorite_count': 0,
@@ -17,7 +17,7 @@ class TestFilterData(unittest.TestCase):
                     'place': None,
                     'hashtags': []}
 
-        keys =  ["id", "created_at", "full_text", "lang", "retweet_count", "favorite_count", "geo", "place", ("entities", "hashtags")]
+        keys =  ["id", "created_at", "text", "full_text", "lang", "retweet_count", "favorite_count", "geo", "place", ("entities", "hashtags")]
         actual = parse_tweet_data(example_json_string, fields=keys)
 
         self.assertEqual(actual, expected)
