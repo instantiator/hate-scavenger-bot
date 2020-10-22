@@ -30,7 +30,7 @@ def process_quote(api, tweet) -> str:
     target_tweet = api.get_status(quoted_message_id)
     
     json_tweet = target_tweet._json
-    json_tweet.update({"explantory_text": explanatory_text})
+    json_tweet.update({"explanatory_text": explanatory_text})
     return json.dumps(json_tweet)
 
 
@@ -40,7 +40,7 @@ def process_reply(api, tweet) -> str:
     target_tweet = api.get_status(reply_id)
 
     json_tweet = target_tweet._json
-    json_tweet.update({"explantory_text": explanatory_text})
+    json_tweet.update({"explanatory_text": explanatory_text})
     return json.dumps(json_tweet)
 
 
