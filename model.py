@@ -88,23 +88,6 @@ def response_to(api, tweet) -> Dict[str, Any]:
     return data
 
 
-"""
-
-  "noted_tweet_is_retweet_of_id": <num>, 
-  "noted_tweet_is_retweet_of_text": <str>,
-  "noted_tweet_in_reply_to_id": <num>, 
-  "noted_tweet_in_reply_to_text": <str>,
-  "noted_tweet_is_retweet_of_account": <str>, 
-  "noted_tweet_in_reply_to_account": <str>,
-
-    "in_reply_to_status_id": null,
-    "in_reply_to_status_id_str": null,
-    "in_reply_to_user_id": null,
-    "in_reply_to_user_id_str": null,
-    "in_reply_to_screen_name": null,
-
-"""
-
 def add_to_database(tweet, filepath):
     with open(filepath,"a") as f:
         f.write(json.dumps(tweet))
