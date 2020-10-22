@@ -6,7 +6,7 @@ from datetime import datetime
 from typing import List
 
 from auth import API_KEY, API_SECRET_KEY, ACCESS_TOKEN, ACCESS_TOKEN_SECRET, BEARER_TOKEN
-import helperMethods
+from helperMethods import parse_tweet_data, cleanup_data
 
 
 def authenticate():
@@ -49,6 +49,10 @@ def process_mention(tweet) -> str:
     return json.dumps(json_tweet)
 
 
+def add_to_database(tweet, filepath):
+    with open(filepath,"w+") as f:
+        f.write(json.dumps(tweet))
+
 
 if __name__ == '__main__':
 
@@ -83,7 +87,16 @@ if __name__ == '__main__':
             logging.info("Tweet {mention.id} is being processed as type 'other'.")
             json_tweet = process_mention(mention)
 
-        
+        json_string = json.dumps(json_tweet)
+
+        logging.info(f"Extracting data from tweet: {mention.id} ...")
+        filtered_data = parse_tweet_data(json_string)
+        logging.info(f"Cleaning and anonymizing extracted data from tweet: {mention.id}")
+        cleaned_data = cleanup_data(filtered_data)
+
+        logging.info("Adding tweet: {mention.id} to the database ...")
+        database_filename = os.path.join(OUTPUT_DIR, "database.txt")
+        add_to_database(cleaned_data, database_filename)
+
 
     logging.info("======================================\n")
-    print("done")
