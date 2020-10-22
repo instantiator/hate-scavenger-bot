@@ -3,7 +3,7 @@ import logging
 import os
 import json
 from datetime import datetime
-from typing import List
+from typing import List, Dict, Any
 
 from auth import API_KEY, API_SECRET_KEY, ACCESS_TOKEN, ACCESS_TOKEN_SECRET, BEARER_TOKEN
 from helperMethods import parse_tweet_data, cleanup_data
@@ -30,13 +30,16 @@ def process_quote(api, tweet) -> str:
     target_tweet = api.get_status(quoted_message_id)
 
     notify = {"notify_text": notify_text, 
-              "notify_tweet_id": tweet.id,
+              "notify_id": tweet.id,
               "notify_is_reply": False,
               "notify_is_retweet": tweet.is_quote_status, 
               "notify_screen_name": tweet.user.screen_name }
     
+    response = response_to(api, target_tweet)
+
     json_tweet = target_tweet._json
     json_tweet.update(notify)
+    json_tweet.update(response)
     return json.dumps(json_tweet)
 
 
@@ -46,15 +49,16 @@ def process_reply(api, tweet) -> str:
     target_tweet = api.get_status(reply_id)
 
     notify = {"notify_text": notify_text, 
-              "notify_tweet_id": tweet.id,
+              "notify_id": tweet.id,
               "notify_is_reply": reply_id,
               "notify_is_retweet": tweet.is_quote_status, 
               "notify_screen_name": tweet.user.screen_name }
 
-
+    response = response_to(api, target_tweet)
 
     json_tweet = target_tweet._json
     json_tweet.update(notify)
+    json_tweet.update(response)
     return json.dumps(json_tweet)
 
 
@@ -62,6 +66,44 @@ def process_mention(tweet) -> str:
     json_tweet = tweet._json
     return json.dumps(json_tweet)
 
+
+def response_to(api, tweet) -> Dict[str, Any]:
+    data: Dict[str, Any] = {"was_reply_to_id": None, "was_reply_to_text": None,
+                            "was_retweet_of_id": None, "was_retweet_of_text": None}
+    
+    reply_id: int = tweet.in_reply_to_status_id
+    if isinstance(reply_id, int): 
+        data["was_reply_to_id"] = reply_id
+
+        target_tweet = api.get_status(reply_id)
+        data["was_reply_to_text"] = target_tweet.text
+
+    if tweet.is_quote_status:
+        quoted_message_id = tweet.quoted_status_id
+        data["was_retweet_of_id"] = quoted_message_id
+
+        target_tweet = api.get_status(quoted_message_id)
+        data["was_retweet_of_text"] = target_tweet.text
+
+    return data
+
+
+"""
+
+  "noted_tweet_is_retweet_of_id": <num>, 
+  "noted_tweet_is_retweet_of_text": <str>,
+  "noted_tweet_in_reply_to_id": <num>, 
+  "noted_tweet_in_reply_to_text": <str>,
+  "noted_tweet_is_retweet_of_account": <str>, 
+  "noted_tweet_in_reply_to_account": <str>,
+
+    "in_reply_to_status_id": null,
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_user_id": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+
+"""
 
 def add_to_database(tweet, filepath):
     with open(filepath,"a") as f:
