@@ -2,8 +2,8 @@ from typing import Dict, Any, Optional
 import json
 import re
 
-TWEET_FIELDS = ['id', 'created_at', 'full_text', 'text', 'explanatory_text', 'lang', 'retweet_count', 'favorite_count', 'geo', ('entities', 'hashtags')]
-
+TWEET_FIELDS = ['id', 'created_at', 'full_text', 'text', ('user', 'screen_name'), 'lang', 'retweet_count', 'favorite_count', 'geo', ('entities', 'hashtags'),
+                'notify_text', 'notify_id', 'notify_is_reply', 'notify_is_retweet', 'notify_screen_name']
 
 def parse_tweet_data(json_string: str, fields=TWEET_FIELDS) -> Dict[str, Any]:
     '''
