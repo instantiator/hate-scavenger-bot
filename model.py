@@ -73,24 +73,22 @@ if __name__ == '__main__':
     logging.info(f"Getting Mentions: {len(recent_mentions)} found")
 
     for mention in recent_mentions:
-        logging.info("Processing Tweet: {mention.id} sent from user: {mention.user} ...")
+        logging.info(f"Processing Tweet: {mention.id} sent from user: {mention.user} ...")
 
         if mention.is_quote_status:
-            logging.info("Tweet {mention.id} is being processed as type 'quote'.")
+            logging.info(f"Tweet {mention.id} is being processed as type 'quote'.")
             json_tweet = process_quote(api, mention)
         
         elif isinstance(mention.in_reply_to_status_id, int): 
-            logging.info("Tweet {mention.id} is being processed as type 'reply'.")
+            logging.info(f"Tweet {mention.id} is being processed as type 'reply'.")
             json_tweet = process_reply(api, mention)
             
         else:
-            logging.info("Tweet {mention.id} is being processed as type 'other'.")
+            logging.info(f"Tweet {mention.id} is being processed as type 'other'.")
             json_tweet = process_mention(mention)
 
-        json_string = json.dumps(json_tweet)
-
         logging.info(f"Extracting data from tweet: {mention.id} ...")
-        filtered_data = parse_tweet_data(json_string)
+        filtered_data = parse_tweet_data(json_tweet)
         logging.info(f"Cleaning and anonymizing extracted data from tweet: {mention.id}")
         cleaned_data = cleanup_data(filtered_data)
 
