@@ -50,7 +50,7 @@ def process_mention(tweet) -> str:
 
 
 def add_to_database(tweet, filepath):
-    with open(filepath,"w+") as f:
+    with open(filepath,"a") as f:
         f.write(json.dumps(tweet))
 
 
