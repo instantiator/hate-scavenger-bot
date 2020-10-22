@@ -39,10 +39,6 @@ def cleanup_data(data:Dict[str, Any]) -> Dict[str, Any]:
         data['text'] = data['full_text']
     data.pop('full_text')
 
-    # Remove Identifying info from text fields
-    data['text'] = remove_user_info_from_tweet(data['text'])
-    data['explanatory_text'] = remove_user_info_from_tweet(data.get('explanatory_text'))
-
     # Convert hashtag list to 'csv' style string
     data['hashtags'] = ','.join(data['hashtags'])
 
