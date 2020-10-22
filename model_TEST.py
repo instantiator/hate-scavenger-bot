@@ -5,7 +5,7 @@ import json
 import time
 
 from model import authenticate
-from helperMethods import parse_tweet_data
+from helperMethods import parse_tweet_data, cleanup_data
 
 def generate_random_string(length:int) -> str:
     return "".join(random.choice(ascii_lowercase) for _ in range(length))
@@ -92,9 +92,11 @@ class TestTwitterBot(unittest.TestCase):
         # should work more or less the same.  
         json_string = json.dumps(tweet._json)
         filtered_data = parse_tweet_data(json_string)
+        cleaned = cleanup_data(filtered_data)
+        
 
-        self.assertEqual(filtered_data["text"], msg)
-        self.assertEqual(filtered_data["id"], tweet.id)
+        self.assertEqual(cleaned["text"], msg)
+        self.assertEqual(cleaned["id"], tweet.id)
 
     @unittest.skip("Currently Broken and do not know how to fix")
     def test_can_get_tweet_quoted_message(self):
