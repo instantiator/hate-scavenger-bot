@@ -132,8 +132,9 @@ if __name__ == '__main__':
         database_filename = os.path.join(OUTPUT_DIR, "database.txt")
         add_to_database(cleaned_data, database_filename)
 
-    logging.info(f"Setting 'Last_tweet_id' to value: {recent_mentions[0].id}")
-    set_most_recent_tweet_id_in_database(database_last_tweet_filename, recent_mentions[0].id)
+    if len(recent_mentions) >= 1:
+        logging.info(f"Setting 'Last_tweet_id' to value: {recent_mentions[0].id}")
+        set_most_recent_tweet_id_in_database(database_last_tweet_filename, recent_mentions[0].id)
 
     logging.info(f"All processing completed at: {datetime.now()}")
     logging.info("======================================\n")
