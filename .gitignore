@@ -1,6 +1,8 @@
 # API secret keys go here...
 auth.py   
 
+output/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -130,3 +132,4 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
