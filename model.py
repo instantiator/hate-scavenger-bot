@@ -31,7 +31,7 @@ def process_quote(api, tweet) -> str:
 
     notify = {"notify_text": notify_text, 
               "notify_tweet_id": tweet.id,
-              "notify_is_reply": False,
+              "notify_is_reply": None,
               "notify_is_retweet": tweet.is_quote_status, 
               "notify_screen_name": tweet.user.screen_name }
     
