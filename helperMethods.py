@@ -2,7 +2,7 @@ from typing import Dict, Any, Optional
 import json
 import re
 
-TWEET_FIELDS = ['id', 'created_at', 'full_text', 'text', ('user', 'screen_name'), 'lang', 'retweet_count', 'favorite_count', 'geo', ('entities', 'hashtags'),
+TWEET_FIELDS = ['id', 'created_at', 'full_text', 'text', ('user', 'screen_name'), 'lang', 'retweet_count', 'favorite_count', 'geo',
                 'notify_text', 'notify_tweet_id', 'notify_is_reply', 'notify_is_retweet', 'notify_screen_name', 'entry_added_by']
 
 def parse_tweet_data(json_string: str, fields=TWEET_FIELDS) -> Dict[str, Any]:
@@ -34,14 +34,13 @@ def parse_tweet_data(json_string: str, fields=TWEET_FIELDS) -> Dict[str, Any]:
 
 
 def cleanup_data(data:Dict[str, Any]) -> Dict[str, Any]:
+    """
+        Remove unwanted keys, change default values, etc.
+    """
     # Remove 'full_text' key, add content to 'text' key
     if data['full_text'] is not None:
         data['text'] = data['full_text']
     data.pop('full_text')
-
-    # Convert hashtag list to 'csv' style string
-    if data["hashtags"]:
-        data['hashtags'] = ','.join(map(lambda hashtag: hashtag["text"], data["hashtags"]))
 
     return data
 
