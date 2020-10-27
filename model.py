@@ -4,6 +4,7 @@ import os
 import json
 from datetime import datetime
 from typing import List
+import asyncio
 
 from auth import API_KEY, API_SECRET_KEY, ACCESS_TOKEN, ACCESS_TOKEN_SECRET, BEARER_TOKEN
 from helperMethods import parse_tweet_data, cleanup_data
@@ -63,10 +64,66 @@ def process_mention(tweet) -> str:
     return json.dumps(json_tweet)
 
 
-def add_to_database(tweet, filepath):
+async def add_to_database(tweet, filepath):
     with open(filepath,"a") as f:
         f.write(json.dumps(tweet))
         f.write("\n")
+
+    return "done"
+
+
+async def main(api):
+    recent_mentions = get_mentions(api)
+    logging.info(f"Getting Mentions: {len(recent_mentions)} found")
+
+    q = asyncio.Queue()
+    for t in reversed(recent_mentions):
+        await q.put(t)
+
+    tasks = []
+    for i in range(6):
+        task = asyncio.create_task(worker(f'worker-{i}', q))
+        tasks.append(task)
+
+    await q.join()
+
+    # Cancel our worker tasks.
+    for task in tasks:
+        task.cancel()
+    # Wait until all worker tasks are cancelled.
+    await asyncio.gather(*tasks, return_exceptions=True)
+
+    
+
+async def worker(name, queue):
+
+    while not queue.empty():
+        mention = await queue.get()
+        logging.info(f"Processing Tweet: {mention.id} sent from user: {mention.user.screen_name} ...")
+        
+        if mention.is_quote_status:
+                logging.info(f"Tweet {mention.id} is being processed as type 'quote'.")
+                json_tweet = process_quote(api, mention)
+            
+        elif isinstance(mention.in_reply_to_status_id, int): 
+            logging.info(f"Tweet {mention.id} is being processed as type 'reply'.")
+            json_tweet = process_reply(api, mention)
+            
+        else:
+            logging.info(f"Tweet {mention.id} is being processed as type 'other'.")
+            json_tweet = process_mention(mention)
+
+        logging.info(f"Extracting data from tweet: {mention.id} ...")
+        filtered_data = parse_tweet_data(json_tweet)
+        filtered_data["entry_added_by"] = my_name # add bot screen_name
+        cleaned_data = cleanup_data(filtered_data)
+
+        logging.info(f"Adding tweet: {mention.id} to the database ...")
+        database_filename = os.path.join(OUTPUT_DIR, "database.txt")
+        await add_to_database(cleaned_data, database_filename)
+
+        queue.task_done()
+
 
 
 if __name__ == '__main__':
@@ -84,32 +141,7 @@ if __name__ == '__main__':
     my_name = api.me().screen_name
     logging.info("Authenticating as ({}): {}".format(my_name, "SUCCESS" if api is not None else "FAILURE"))
     
-    recent_mentions = get_mentions(api)
-    logging.info(f"Getting Mentions: {len(recent_mentions)} found")
-
-    for mention in reversed(recent_mentions): # mentions is effectively a queue where first is most recent. Best to feed in oldest first (hence reversed).
-        logging.info(f"Processing Tweet: {mention.id} sent from user: {mention.user.screen_name} ...")
-
-        if mention.is_quote_status:
-            logging.info(f"Tweet {mention.id} is being processed as type 'quote'.")
-            json_tweet = process_quote(api, mention)
-        
-        elif isinstance(mention.in_reply_to_status_id, int): 
-            logging.info(f"Tweet {mention.id} is being processed as type 'reply'.")
-            json_tweet = process_reply(api, mention)
-            
-        else:
-            logging.info(f"Tweet {mention.id} is being processed as type 'other'.")
-            json_tweet = process_mention(mention)
-
-        logging.info(f"Extracting data from tweet: {mention.id} ...")
-        filtered_data = parse_tweet_data(json_tweet)
-        filtered_data["entry_added_by"] = my_name # add bot screen_name
-        cleaned_data = cleanup_data(filtered_data)
-
-        logging.info(f"Adding tweet: {mention.id} to the database ...")
-        database_filename = os.path.join(OUTPUT_DIR, "database.txt")
-        add_to_database(cleaned_data, database_filename)
+    asyncio.run(main(api))
 
 
     logging.info("======================================\n")
