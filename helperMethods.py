@@ -40,7 +40,8 @@ def cleanup_data(data:Dict[str, Any]) -> Dict[str, Any]:
     data.pop('full_text')
 
     # Convert hashtag list to 'csv' style string
-    data['hashtags'] = ','.join(data['hashtags'])
+    if data["hashtags"]:
+        data['hashtags'] = ','.join(map(lambda hashtag: hashtag["text"], data["hashtags"]))
 
     return data
 
