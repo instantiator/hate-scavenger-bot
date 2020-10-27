@@ -87,7 +87,7 @@ if __name__ == '__main__':
     recent_mentions = get_mentions(api)
     logging.info(f"Getting Mentions: {len(recent_mentions)} found")
 
-    for mention in recent_mentions:
+    for mention in reversed(recent_mentions): # mentions is effectively a queue where first is most recent. Best to feed in oldest first (hence reversed).
         logging.info(f"Processing Tweet: {mention.id} sent from user: {mention.user.screen_name} ...")
 
         if mention.is_quote_status:
