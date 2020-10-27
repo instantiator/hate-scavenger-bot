@@ -4,6 +4,7 @@ import os
 import json
 from datetime import datetime
 from typing import List
+from uuid import uuid4
 
 from auth import API_KEY, API_SECRET_KEY, ACCESS_TOKEN, ACCESS_TOKEN_SECRET, BEARER_TOKEN
 from helperMethods import parse_tweet_data, cleanup_data
@@ -105,6 +106,7 @@ if __name__ == '__main__':
         logging.info(f"Extracting data from tweet: {mention.id} ...")
         filtered_data = parse_tweet_data(json_tweet)
         filtered_data["entry_added_by"] = my_name # add bot screen_name
+        filtered_data["uid"] = str(uuid4()) # unique identifier
         cleaned_data = cleanup_data(filtered_data)
 
         logging.info(f"Adding tweet: {mention.id} to the database ...")
