@@ -1,11 +1,10 @@
-from typing import Dict, Any, Optional
+from typing import Dict, Any
 import json
-import re
 import dateutil.parser as parser
 
 TWEET_FIELDS = ['id', 'created_at', 'full_text', 'text', ('user', 'screen_name'), 'lang', 'retweet_count', 'favorite_count', 'geo',
                 'notify_text', 'notify_tweet_id', 'notify_is_reply', 'notify_is_retweet', 'notify_screen_name']
-
+                
 # Other fields in DB:  'entry_added_by', "uid"
 
 def parse_tweet_data(json_string: str, fields=TWEET_FIELDS) -> Dict[str, Any]:
@@ -37,41 +36,16 @@ def parse_tweet_data(json_string: str, fields=TWEET_FIELDS) -> Dict[str, Any]:
 
 
 def cleanup_data(data:Dict[str, Any]) -> Dict[str, Any]:
-    """
-        Remove unwanted keys, change default values, etc.
-    """
     # Remove 'full_text' key, add content to 'text' key
     if data['full_text'] is not None:
         data['text'] = data['full_text']
     data.pop('full_text')
+    
     data["created_at"] = parse_date(data["created_at"])
 
     return data
-
-
-def remove_user_info_from_tweet(tweet:Optional[str]) -> str:
-    '''
-        '@Bot Hello World!'  => '@_ Hello World!'
-        '@Bot I don't like @Bot2, he is mean' => '@_ I don't like @_, he is mean'
-    '''
-    if tweet is None: 
-        return ''
-
-    return re.sub(r'@[\w_]+', '@_', tweet)
-
-def remove_url_from_tweet(tweet: Optional[str]) -> str:
-    '''
-        'here is a url https://t.co/MTKGymzfmf' => 'here is a url <url>'
-    '''
-
-    ## https://stackoverflow.com/questions/6038061/regular-expression-to-find-urls-within-a-string
-    pattern = r'(http|ftp|https)://([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?'
-
-    if tweet is None:
-        return ''
-
-    return re.sub(pattern, '<url>', tweet)
-
+    
+    
 def parse_date(date:str) -> str:
     """
     Takes a string of the form:
