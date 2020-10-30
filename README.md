@@ -18,4 +18,4 @@
 - **notify_is_retweet**: *??*
 - **notify_screen_name**: String - *Twitter username, the person notifying us about the the 'offensive tweet'.*
 - **notify_text**: String - *The 'notifying tweet'. This may contain additional information/context about the 'offensive tweet'.*
-- **notify_tweet_id**: Int - *Tweet id (from Twitter) of the 'notifying tweet'.*
+- **notify_tweet_id**: Integer - *Tweet id (from Twitter) of the 'notifying tweet'.*
