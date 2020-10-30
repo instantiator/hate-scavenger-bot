@@ -3,7 +3,7 @@
 ## Database Columns
 
 - **uid**: String - *Primary Key, a unique Identifier for each entry in the database.*
-- **created_at**: String - *a datetime string in ISO 8601 format.*
+- **created_at**: String - *a datetime string in ISO 8601 format. The time the 'offensive tweet' was posted on Twitter*
 - **entry_added_by**: String - *Name of the bot/user that added this entry.*
 - **favorite_count**: Integer - *Number of times the 'offensive tweet' has been favorited.*
 - **retweet_count**: Integer - *Number of times the 'offensive tweet' has been retweeted.*
