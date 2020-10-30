@@ -4,6 +4,7 @@ import os
 import json
 from datetime import datetime
 from typing import List, Optional
+from uuid import uuid4
 
 from auth import API_KEY, API_SECRET_KEY, ACCESS_TOKEN, ACCESS_TOKEN_SECRET, BEARER_TOKEN
 from helperMethods import parse_tweet_data, cleanup_data
@@ -28,22 +29,36 @@ def get_mentions(api, since:int=None) -> List:
 
 
 def process_quote(api, tweet) -> str:
-    explanatory_text = tweet.text
+    notify_text = tweet.text
     quoted_message_id = tweet.quoted_status_id
     target_tweet = api.get_status(quoted_message_id)
+
+    notify = {"notify_text": notify_text, 
+              "notify_tweet_id": tweet.id,
+              "notify_is_reply": None,
+              "notify_is_retweet": tweet.is_quote_status, 
+              "notify_screen_name": tweet.user.screen_name }
     
     json_tweet = target_tweet._json
-    json_tweet.update({"explanatory_text": explanatory_text})
+    json_tweet.update(notify)
     return json.dumps(json_tweet)
 
 
 def process_reply(api, tweet) -> str:
-    explanatory_text = tweet.text
+    notify_text = tweet.text
     reply_id: int = tweet.in_reply_to_status_id
     target_tweet = api.get_status(reply_id)
 
+    notify = {"notify_text": notify_text, 
+              "notify_tweet_id": tweet.id,
+              "notify_is_reply": reply_id,
+              "notify_is_retweet": tweet.is_quote_status, 
+              "notify_screen_name": tweet.user.screen_name }
+
+
+
     json_tweet = target_tweet._json
-    json_tweet.update({"explanatory_text": explanatory_text})
+    json_tweet.update(notify)
     return json.dumps(json_tweet)
 
 
@@ -108,7 +123,7 @@ if __name__ == '__main__':
 
     logging.info(f"{len(recent_mentions)} Mentions found")
 
-    for mention in recent_mentions:
+    for mention in reversed(recent_mentions): # mentions is effectively a queue where first is most recent. Best to feed in oldest first (hence reversed).
         logging.info(f"Processing Tweet: {mention.id} sent from user: {mention.user.screen_name} ...")
 
         if mention.is_quote_status:
@@ -125,7 +140,8 @@ if __name__ == '__main__':
 
         logging.info(f"Extracting data from tweet: {mention.id} ...")
         filtered_data = parse_tweet_data(json_tweet)
-        logging.info(f"Cleaning and anonymizing extracted data from tweet: {mention.id}")
+        filtered_data["entry_added_by"] = my_name # add bot screen_name
+        filtered_data["uid"] = str(uuid4()) # unique identifier
         cleaned_data = cleanup_data(filtered_data)
 
         logging.info(f"Adding tweet: {mention.id} to the database ...")
