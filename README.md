@@ -11,7 +11,7 @@
 - **id**: Integer - *Tweet id (from Twitter) of the 'offensive tweet'.*
 - **lang**: String - *Two-Character codes (ISO 639) denoting the Language the 'offensive tweet' was written in.*
 - **screen_name**: String - *Twitter username, author of the 'offensive tweet'.*
-- **text**: String - *The 'offensive tweet'*
+- **text**: String - *The 'offensive tweet' itself.*
 - **notify_is_reply**: *??*
 - **notify_is_retweet**: *??*
 - **notify_screen_name**: String - *Twitter username, the person notifying us about the the 'offensive tweet'.*
