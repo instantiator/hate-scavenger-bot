@@ -1,5 +1,6 @@
 from typing import Dict, Any
 import json
+import dateutil.parser as parser
 
 TWEET_FIELDS = ['id', 'created_at', 'full_text', 'text', ('user', 'screen_name'), 'lang', 'retweet_count', 'favorite_count', 'geo',
                 'notify_text', 'notify_tweet_id', 'notify_is_reply', 'notify_is_retweet', 'notify_screen_name']
@@ -39,5 +40,20 @@ def cleanup_data(data:Dict[str, Any]) -> Dict[str, Any]:
     if data['full_text'] is not None:
         data['text'] = data['full_text']
     data.pop('full_text')
+    
+    data["created_at"] = parse_date(data["created_at"])
 
     return data
+    
+    
+def parse_date(date:str) -> str:
+    """
+    Takes a string of the form:
+        Mon Oct 19 23:11:47 +0000 2020
+    And returns:
+        2020-10-19T23:11:47+00:00
+    
+    Which is a datestring in ISO 8601 format (a format which is supported by dynamoDB)
+    """
+    #https://stackoverflow.com/questions/4460698/python-convert-string-representation-of-date-to-iso-8601    
+    return parser.parse(date).isoformat()
