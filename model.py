@@ -53,7 +53,7 @@ def process_reply(api, tweet) -> str:
     target_tweet = api.get_status(reply_id)
 
     notify = {"notify_text": notify_text, 
-              "notify_id": tweet.id,
+              "notify_tweet_id": tweet.id,
               "notify_is_reply": True if reply_id else False,
               "notify_is_retweet": tweet.is_quote_status, 
               "notify_screen_name": tweet.user.screen_name }
