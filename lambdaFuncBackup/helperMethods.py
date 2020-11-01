@@ -3,7 +3,8 @@ import json
 import dateutil.parser as parser
 
 TWEET_FIELDS = ['id', 'created_at', 'full_text', 'text', ('user', 'screen_name'), 'lang', 'retweet_count', 'favorite_count', 'geo',
-                'notify_text', 'notify_tweet_id', 'notify_is_reply', 'notify_is_retweet', 'notify_screen_name']
+                "was_reply_to_id", "was_reply_to_text", "was_retweet_of_id", "was_retweet_of_text",
+                'notify_text', 'notify_tweet_id', 'notify_is_reply', 'notify_is_retweet', 'notify_screen_name'] 
                 
 # Other fields in DB:  'entry_added_by', "uid"
 
@@ -42,7 +43,7 @@ def cleanup_data(data:Dict[str, Any]) -> Dict[str, Any]:
     data.pop('full_text')
     
     data["created_at"] = parse_date(data["created_at"])
-
+    
     return data
     
     
