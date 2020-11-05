@@ -26,7 +26,9 @@ If you are a researcher and would like access to the dataset, please contact one
 
 The code for this project is written in Python and we use the "Tweepy" library as a 'middleman' between us and the Twitter API. 
 
-The code is hosted on AWS (lambda) and every 15mins we boot up the bot and add any new mentions to a Dynamo DB database.
+The code is hosted on AWS (lambda) and every 15mins we boot up the bot and add any new mentions to a Dynamo DB database. A copy of the code running on AWS can be found in the "lambdaFuncBackup" folder (The 'tweepy-layer' folder is everything we use for the AWS lambda's function layer). 
+
+Note that the code can be run locally as well (this is mainly for testing) in which case the 'database' is replaced with text files. To run in this way, simply give 'auth.py' your Twitter dev keys and tokens and run 'model.py'
 
 ## Database
 
