@@ -37,14 +37,16 @@ Note that the code can be run locally as well (this is mainly for testing) in wh
 Please not that where "NULL" is a datatype this means that the value 'True' in the dataset means that the value is NULL *(this just seems to be a quirk of how DynamoDB operates)*.  
 
 For Example, 'notify_text' has the type String/NULL which means in that dataset you will often see entries like this:
-    notify_text: True  # <= this means notify text is NULL
-    notify_text: "hello world"
+- notify_text: True  # <= this means notify text is NULL
+- notify_text: "hello world"
 
 ### Database Columns
 
 Format:
+
 - **Column Name**: <DataType(s)> - *Explanation*
 
+...
 
 - **uid**: String - *Primary Key, a unique Identifier for each entry in the database.*
 - **created_at**: String - *a datetime string in ISO 8601 format. The time the 'offensive tweet' was posted on Twitter.*
