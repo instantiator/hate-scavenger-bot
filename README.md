@@ -13,7 +13,7 @@ At present, **we do nothing with the data** (i.e we do not notify police or any 
 
 ## How to use it
 
-To use the bot, simply reply to the a hateful tweet on Twitter mentioning the bot (i.e. @theHateHawk). The bot will then do the rest. 
+To use the bot, simply reply to a hateful tweet on Twitter mentioning the bot (i.e. @theHateHawk). The bot will then do the rest. 
 
 ## Request Data Access
 
