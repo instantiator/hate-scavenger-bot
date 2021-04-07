@@ -1,40 +1,41 @@
 # hate-scavenger-bot
 
+**This was a project from [Hack Hate 2020](https://hackhate.org). At present, the bot is decommissioned.**
+
 ## Last Update
 5/11/2020
 
 ## Introduction
 
-This project about collecting examples of HateSpeech on Twitter. The core idea is that a Twitter User sees a hateful tweet and mentions the bot. The bot then adds the tweet (and other relevant metadata) to a database.
+This project is about collecting examples of HateSpeech on Twitter. The core idea is that a Twitter User sees a hateful tweet and mentions the bot. The bot then adds the tweet (and other relevant metadata) to a database.
 
-The goal of the project is to provide researchers a large corpus of text with which to study *(and/or train machine learning models on)* Hate speech on Twitter.
-
-At present, **we do nothing with the data** (i.e we do not notify police or any other agency). 
+The goal of the project is to be able to provide researchers a large corpus of text with which to study *(and/or train machine learning models on)* Hate speech on Twitter.
 
 ## How to use it
 
-To use the bot, simply reply to a hateful tweet on Twitter mentioning the bot (i.e. @theHateHawk). The bot will then do the rest. 
+To use the bot, simply reply to a hateful tweet on Twitter mentioning the bot (i.e. ~~@theHateHawk~~). The bot will then do the rest. 
 
 ## Request Data Access
 
 If you are a researcher and would like access to the dataset, please contact one of the project contributors, briefly detailing your project. 
 
 ## Follow us on Twitter
-@theHateHawk
+
+~~@theHateHawk~~
 
 # Technical Details
 
 The code for this project is written in Python and we use the "Tweepy" library as a 'middleman' between us and the Twitter API. 
 
-The code is hosted on AWS (lambda) and every 15mins we boot up the bot and add any new mentions to a Dynamo DB database. A copy of the code running on AWS can be found in the "lambdaFuncBackup" folder (The 'tweepy-layer' folder is everything we use for the AWS lambda's function layer). 
+The code is hosted on AWS (lambda) and every 15mins we boot up the bot and add any new mentions to a Dynamo DB database. A copy of the code running on AWS can be found in the `lambdaFuncBackup` folder (The `tweepy-layer` folder is everything we use for the AWS lambda's function layer). 
 
-Note that the code can be run locally as well (this is mainly for testing) in which case the 'database' is replaced with text files. To run in this way, simply give 'auth.py' your Twitter dev keys and tokens and run 'model.py'
+Note that the code can be run locally as well (this is mainly for testing) in which case the 'database' is replaced with text files. To run in this way, simply give `auth.py` your Twitter dev keys and tokens and run 'model.py'
 
 ## Database
 
 ### Explanatory Notes
 
-Please not that where "NULL" is a datatype this means that the value 'True' in the dataset means that the value is NULL *(this just seems to be a quirk of how DynamoDB operates)*.  
+Please not that where `NULL` is a datatype this means that the value 'True' in the dataset means that the value is `NULL` *(this just seems to be a quirk of how DynamoDB operates)*.  
 
 For Example, 'notify_text' has the type String/NULL which means in that dataset you will often see entries like this:
 - notify_text: True  # <= this means notify text is NULL
